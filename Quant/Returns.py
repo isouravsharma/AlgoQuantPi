@@ -8,6 +8,7 @@ Created on Sun Feb 16 15:44:02 2025
 
 # Calculate Return
 
+import numpy as np
 def cummulative_returns(data):
     #data = pd.DataFrame(data)
     data['d_rtn'] = data['Close'].pct_change()
@@ -16,9 +17,16 @@ def cummulative_returns(data):
     data['cum_rtn'] = ((1+ data['d_rtn']).cumprod() -1)*100
     return data
 
-# (1 + data['Daily Return']).cumprod() - 1
+# CAGR
 
-# cummulative Return
+def CAGR(data):
+    n = len(data)/252
+    data['CAGR'] = np.abs((data['cum_rtn'].iloc[-1]))**(1/n)-1
+    return data
+    
+# Volatility
 
-# Trade Return
+def volatility(data):
+    data['vol']  = data['d_rtn'].std()*np.sqrt(252)
+    return data
 
