@@ -76,7 +76,7 @@ def BB(data, n = 14):
     return data
 
 # Linear Regression Band
-def calculate_LR(data, ax= None):
+def LR(data, ax= None):
     y = np.array(data['Close'])
     X = pd.to_datetime(data['Close'].index).map(dt.datetime.toordinal)
     X = np.array(X)

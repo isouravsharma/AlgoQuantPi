@@ -1,15 +1,52 @@
-from getData import get_data
-from technical_indicator import calculate_LR, calculate_rsi
-from Returns import cummulative_returns
+from getData import  get_ohlcv
+from technical_indicator import LR, RSI
+# from Returns import cummulative_returns, CAGR
+import copy
 
-data=get_data('RELIANCE.NS', '2022-01-01')
+tickers = ['^NSEI', 'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'BHARTIARTL.NS', 'ICICIBANK.NS', 'INFY.NS', 'SBIN.NS', 'HINDUNILVR.NS', 
+           'BAJFINANCE.NS',
+           'ITC.NS']
 
-print(data)
-type(data)
+# Store data in dictionary
+ohlcv_dict = {}
+for stock in tickers:
+    ohlcv_dict[stock] = get_ohlcv(ticker=stock, period = '10y', interval='1d')
 
-calculate_LR(data)
-calculate_rsi(data)
+
+data = copy.deepcopy(ohlcv_dict)
 
 
-cummulative_returns(data)
-#data['pct']= data['Close'].pct_change()
+
+
+# Analysis of Returns 
+
+for stock in data.keys():
+    # print(f"CAGR of stock {stock} is {CAGR(data[stock])}")
+    # print(f"CUM RETURN of stock {stock} is {cummulative_returnss()}")
+    cummulative_returns(data[stock])
+    CAGR(data[stock])
+
+
+DF = data['ICICIBANK.NS']
+
+
+    
+def cummulative_returns(data):
+    #data = pd.DataFrame(data)
+    data[stock]['d_rtn'] = data[stock]['Close'].pct_change()
+    # data['w_rtn'] = data['Close'].resample('W').ffill().pct_change()
+    # data['m_rtn'] = data['Close'].resample('M').ffill().pct_change()
+    data[stock]['cum_rtn'] = ((1+ data[stock]['d_rtn']).cumprod() -1)*100
+    return True
+
+# CAGR
+
+def CAGR(data):
+    # data.copy()
+    n = len(data[stock])/252
+    data[stock]['CAGR'] = np.abs((data[stock]['cum_rtn'].iloc[-1]))**(1/n)-1
+    return True
+
+print(data.keys())
+
+cummulative_returns(data['^NSEI'])
