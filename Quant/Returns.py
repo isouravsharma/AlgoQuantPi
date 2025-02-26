@@ -22,16 +22,16 @@ def cummulative_returns(data):
 
 # CAGR
 
-def CAGR(data):
+def CAGR(data, n):
     # data = data.copy()
-    n = len(data)/252
+    n = len(data)/n
     data['CAGR'] =((data['cum_rtn'].iloc[-1]))**(1/n)-1
     return data
     
 # Volatility
 
-def volatility(data):
-    data['VOL']  = (data['d_rtn'].std()* np.sqrt(252))
+def volatility(data, n):
+    data['VOL']  = (data['d_rtn'].std()* np.sqrt(n))
     return data
 
 # SHARPE

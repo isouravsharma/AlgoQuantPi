@@ -27,12 +27,13 @@ def MACD(data, a=12, b=26, c=9):
 
 # ATR
 def ATR(data, n = 14):
-    data['H-L'] = data['High'] - data['Low']
-    data['H-PC'] = data['High'] - data['Close'].shift(1)
-    data['L-PC'] = data['Low'] - data['Close'].shift(1)
-    data["TR"] = data[['H-L','H-PC','L-PC']].max(axis=1, skipna = False)
-    data['ATR'] = data['TR'].ewm(span = n, min_periods = n).mean()
-    return data
+    df = data.copy()
+    df['H-L'] = df['High'] - df['Low']
+    df['H-PC'] = df['High'] - df['Close'].shift(1)
+    df['L-PC'] = df['Low'] - df['Close'].shift(1)
+    df["TR"] = df[['H-L','H-PC','L-PC']].max(axis=1, skipna = False)
+    data['ATR'] = df['TR'].ewm(span = n, min_periods = n).mean()
+    return data['ATR']
 
 #RENKO
 
