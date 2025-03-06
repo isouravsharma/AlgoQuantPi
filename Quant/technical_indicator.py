@@ -4,7 +4,8 @@ import datetime as dt
 from renko import Renko
 
 # RSI 
-def RSI(data, n = 14):
+def RSI(df, n = 14):
+    data = df.copy()
     delta = data['Close'] - data['Close'].shift(1)
     gain = (delta.where(delta>=0, 0)).fillna(0)
     loss = (-delta.where(delta <0, 0)).fillna(0)
@@ -12,8 +13,8 @@ def RSI(data, n = 14):
     avg_loss = loss.ewm(alpha = 1/n, min_periods = n).mean()
     rs = avg_gain/avg_loss
     rsi = 100-(100/(1+rs))
-    data['RSI'] = rsi
-    return data
+    df['RSI'] = rsi
+    return df['RSI']
     
 #MACD
 def MACD(data, a=12, b=26, c=9):
@@ -69,12 +70,14 @@ def ADX(data, n = 20):
     return data
     
 # Bollinger Band
-def BB(data, n = 14):
+def BB(df, n = 14):
+    data = df.copy()
     data['MB'] = data['Close'].rolling(n).mean()
-    data['UB'] = data['MB'] + 2* data['Close'].rolling(n).std(ddof = 0)
-    data['LB'] = data['MB'] - 2* data['Close'].rolling(n).std(ddof = 0)
+    data['STD'] = data['Close'].rolling(n).std(ddof = 0)
+    data['UB'] = data['MB'] + 2* data['STD']
+    data['LB'] = data['MB'] - 2* data['STD']
     data['WIDTH'] = data['UB'] - data['LB']
-    return data
+    return data[['MB','UB','LB','STD','WIDTH']]
 
 # Linear Regression Band
 def LR(data, ax= None):
