@@ -8,8 +8,8 @@ def get_data(ticker, start_date, end_date = datetime.datetime.today().strftime("
     # ohlc[ticker] = download_data
     return download_data
 
-def get_ohlcv(ticker, period, interval):
-    data = yf.download(tickers= ticker, period = period, interval = interval)
+def get_ohlcv(ticker, period, interval, multi_level_index=False):
+    data = yf.download(tickers= ticker, period = period, interval = interval, multi_level_index=False)
     data.dropna(how='any', inplace = True)
     return data
 
