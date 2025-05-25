@@ -14,11 +14,24 @@ def cummulative_returns(data):
     # data = DF.copy()
     #data = pd.DataFrame(data)
     data['d_rtn'] = data['Close'].pct_change()
-    data['daily_returns'] = data['Close'].pct_change()
+    # data['daily_returns'] = data['Close'].pct_change()
     # data['w_rtn'] = data['Close'].resample('W').ffill().pct_change()
     # data['m_rtn'] = data['Close'].resample('M').ffill().pct_change()
     data['cum_rtn'] =  (1+ data['d_rtn']).cumprod()
+    data['r_mean'] = data['cum_rtn'].rolling(30).mean()
+    data['r_std2+'] = (3* data['cum_rtn'].rolling(30).std() + data['cum_rtn'].rolling(30).mean())
+    data['r_std2-'] = (-3* data['cum_rtn'].rolling(30).std() + data['cum_rtn'].rolling(30).mean())
     return data
+
+# def cummulative_returns(data):
+#     # data = DF.copy()
+#     #data = pd.DataFrame(data)
+#     data['d_rtn'] = data['Close'].pct_change()
+#     # data['daily_returns'] = data['Close'].pct_change()
+#     # data['w_rtn'] = data['Close'].resample('W').ffill().pct_change()
+#     # data['m_rtn'] = data['Close'].resample('M').ffill().pct_change()
+#     data['cum_rtn'] =  (1+ data['d_rtn']).cumprod()
+#     return data
 
 # CAGR
 

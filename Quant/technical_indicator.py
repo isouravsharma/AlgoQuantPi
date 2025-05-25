@@ -95,3 +95,16 @@ def LR(data, ax= None):
     data['-2STD'] = regression_line - 2 * data['STD']
     X = pd.to_datetime(data['Close'].index)
     return data
+#Anomaly
+
+def anomaly(data):
+    df = data.copy()
+    window = 16
+    threshold = 2.7
+    df['Log_Return'] = np.log(df['Close'] / df['Close'].shift(1))
+    df['Rolling_Mean'] = df['Log_Return'].rolling(window).mean()
+    df['Rolling_STD'] = df['Log_Return'].rolling(window).std()
+    df['Z_Score'] = (df['Log_Return'] - df['Rolling_Mean']) / df['Rolling_STD']
+    df['Anomaly'] = (df['Z_Score'] > threshold) | (df['Z_Score'] < -threshold)
+    data['Anomaly'] = df['Anomaly']
+    return data['Anomaly']
