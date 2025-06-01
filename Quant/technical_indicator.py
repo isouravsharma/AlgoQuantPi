@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 from renko import Renko
+from scipy.signal import argrelextrema
 
 # RSI 
 def RSI(df, n = 14):
@@ -59,7 +60,7 @@ def RENKO(data):
 
 
 #ADX
-def ADX(data, n = 20):
+def ADX(data, n = 14):
     data['UPMOVE'] = data['High'] - data['High'].shift(1)   
     data['DOWNMOVE'] = data['Low'].shift(1) - data['Low']
     data['+DM'] = np.where((data['UPMOVE']> data['DOWNMOVE']) & (data['UPMOVE']> 0), data['UPMOVE'],0)
@@ -70,8 +71,8 @@ def ADX(data, n = 20):
     return data
     
 # Bollinger Band
-def BB(df, n = 14):
-    data = df.copy()
+def BB(data, n = 14):
+    # df = data.copy()
     data['MB'] = data['Close'].rolling(n).mean()
     data['STD'] = data['Close'].rolling(n).std(ddof = 0)
     data['UB'] = data['MB'] + 2* data['STD']
@@ -107,4 +108,34 @@ def anomaly(data):
     df['Z_Score'] = (df['Log_Return'] - df['Rolling_Mean']) / df['Rolling_STD']
     df['Anomaly'] = (df['Z_Score'] > threshold) | (df['Z_Score'] < -threshold)
     data['Anomaly'] = df['Anomaly']
-    return data['Anomaly']
+    data['Log_Return'] = df['Log_Return']
+    return data[['Anomaly','Log_Return']]
+    
+def historical_volatility(data, window=14):
+    # Rolling standard deviation
+    volatility = data['Log_Return'].rolling(window).std() * np.sqrt(252)  # annualized
+    data['volatility'] = volatility
+    return data['volatility']
+
+def get_support_resistance_levels(data, order=14):
+    # Local minima as support
+    support_idx = argrelextrema(data['Low'].values, np.less_equal, order=order)[0]
+    support_levels = data['Low'].iloc[support_idx]
+
+    # Local maxima as resistance
+    resistance_idx = argrelextrema(data['High'].values, np.greater_equal, order=order)[0]
+    resistance_levels = data['High'].iloc[resistance_idx]
+
+    return support_levels, resistance_levels
+
+def VWAP(data):
+    # Step 1: Calculate Typical Price (Series)
+    data['TP'] = (data['High'] + data['Low'] + data['Close']) / 3
+    
+    # Step 2: Cumulative volume and cumulative price*volume
+    data['cum_vol'] = data['Volume'].cumsum()
+    data['cum_pv'] = (data['TP'] * data['Volume']).cumsum()
+    # data['cum_pv'] = np.multiply(data['TP'].values, data['Volume'].values).cumsum()
+    # Step 3: VWAP
+    data['VWAP'] = data['cum_pv'] / data['cum_vol']
+    return data['VWAP']
