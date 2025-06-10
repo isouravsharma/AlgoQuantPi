@@ -109,7 +109,8 @@ def anomaly(data):
     df['Anomaly'] = (df['Z_Score'] > threshold) | (df['Z_Score'] < -threshold)
     data['Anomaly'] = df['Anomaly']
     data['Log_Return'] = df['Log_Return']
-    return data[['Anomaly','Log_Return']]
+    data['Z_Score'] = df['Z_Score']
+    return data[['Anomaly','Log_Return','Z_Score']]
     
 def historical_volatility(data, window=14):
     # Rolling standard deviation

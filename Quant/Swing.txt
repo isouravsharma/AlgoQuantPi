@@ -1,0 +1,18 @@
+- Find the stock with Fall -2SD
+- Track its fall 
+- Buy when rise
+-----------
+
+1.  Month Week and Day chart of 2 SD 
+
+scoring of TI
+
+score = 0
+score += int(row['Z_Score'] < -2.0)
+score += int(row['RSI'] < 35)
+score += int(row['Close'] < row['LB'])
+score += int(row['Close'] < row['VWAP'])
+score += int((row['High'] - row['Low']) < 1.2 * row['ATR'])
+score += int(row['Close'] > row['Low'] + 0.4 * (row['High'] - row['Low']))
+
+entry_long = score >= 5  # Tunable threshold
