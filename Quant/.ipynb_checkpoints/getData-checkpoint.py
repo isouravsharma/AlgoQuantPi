@@ -2,7 +2,7 @@ import yfinance as yf
 import datetime
 
 
-def get_data(ticker, start_date, end_date = datetime.datetime.today().strftime("%Y-%m-%d"), interval = '1d'):
+def get_data(ticker, start_date, end_date = datetime.datetime.today().strftime("%Y-%m-%d"), interval = '1d', multi_level_index=False):
     # ohlc = {}
     download_data = yf.download(tickers = ticker, start = start_date, end = end_date, interval=interval)
     # ohlc[ticker] = download_data

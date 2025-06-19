@@ -1,3 +1,4 @@
+import pandas as pd
 # Strategy 1 
 def stratgey1_mean_reversion(row):
     if(
@@ -27,3 +28,30 @@ def stratgey2_momentum(row):
         return -1  # Sell
     else:
         return 0  # Hold
+
+def label_sd_categories(df, column='Distance_From_Mean'):
+    mean = df[column].mean()
+    std = df[column].std()
+
+    def categorize(x):
+        if x >= mean + 3 * std:
+            return 'BELOW 3 SD', 3
+        elif x >= mean + 2 * std:
+            return 'BELOW 2 SD', 2
+        elif x >= mean + 1 * std:
+            return 'BELOW 1 SD', 1
+        elif x <= mean - 3 * std:
+            return 'ABOVE 3 SD', -3
+        elif x <= mean - 2 * std:
+            return 'ABOVE 2 SD', -2
+        elif x <= mean - 1 * std:
+            return 'ABOVE 1 SD', -1
+        else:
+            return 'AT MEAN', 0
+
+    labels_levels = df[column].apply(categorize)
+    df[['Label', 'SD_Level']] = pd.DataFrame(labels_levels.tolist(), index=df.index)
+
+    return df
+
+

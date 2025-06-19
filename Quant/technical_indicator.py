@@ -3,6 +3,7 @@ import numpy as np
 import datetime as dt
 from renko import Renko
 from scipy.signal import argrelextrema
+from scipy.stats import trim_mean
 
 # RSI 
 def RSI(df, n = 14):
@@ -27,6 +28,12 @@ def MACD(data, a=12, b=26, c=9):
     # return data.loc[:, ['MACD','SIGNAL']]
     return data
 
+#MA
+def MA(data):
+    data['SMO'] = data['Close'].ewm(span = a, min_periods=a).mean()
+    data['ma_slow'] = data['Close'].ewm(span = b, min_periods=b).mean()
+    data['MACD'] = data['ma_fast'] - data['ma_slow']
+    data['SIGNAL'] = data['MACD'].ewm(span=c, min_periods=c).mean()
 # ATR
 def ATR(data, n = 14):
     df = data.copy()
@@ -73,12 +80,23 @@ def ADX(data, n = 14):
 # Bollinger Band
 def BB(data, n = 14):
     # df = data.copy()
-    data['MB'] = data['Close'].rolling(n).mean()
+    # data['MB'] = data['Close'].rolling(n).mean()
+    data['MB'] = data['Close'].rolling(n).apply(lambda x: trim_mean(x, proportiontocut = 0.15), raw=True)
     data['STD'] = data['Close'].rolling(n).std(ddof = 0)
     data['UB'] = data['MB'] + 2* data['STD']
     data['LB'] = data['MB'] - 2* data['STD']
     data['WIDTH'] = data['UB'] - data['LB']
     return data[['MB','UB','LB','STD','WIDTH']]
+
+# # Bollinger Band - Normal Mean
+# def BB(data, n = 14):
+#     # df = data.copy()
+#     data['MB'] = data['Close'].rolling(n).mean()
+#     data['STD'] = data['Close'].rolling(n).std(ddof = 0)
+#     data['UB'] = data['MB'] + 2* data['STD']
+#     data['LB'] = data['MB'] - 2* data['STD']
+#     data['WIDTH'] = data['UB'] - data['LB']
+#     return data[['MB','UB','LB','STD','WIDTH']]
 
 # Linear Regression Band
 def LR(data, ax= None):

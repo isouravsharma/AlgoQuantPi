@@ -3,6 +3,7 @@ import numpy as np
 import datetime as dt
 from renko import Renko
 from scipy.signal import argrelextrema
+from scipy.stats import trim_mean
 
 # RSI 
 def RSI(df, n = 14):
@@ -73,12 +74,23 @@ def ADX(data, n = 14):
 # Bollinger Band
 def BB(data, n = 14):
     # df = data.copy()
-    data['MB'] = data['Close'].rolling(n).mean()
+    # data['MB'] = data['Close'].rolling(n).mean()
+    data['MB'] = data['Close'].rolling(n).apply(lambda x: trim_mean(x, proportiontocut = 0.15), raw=True)
     data['STD'] = data['Close'].rolling(n).std(ddof = 0)
     data['UB'] = data['MB'] + 2* data['STD']
     data['LB'] = data['MB'] - 2* data['STD']
     data['WIDTH'] = data['UB'] - data['LB']
     return data[['MB','UB','LB','STD','WIDTH']]
+
+# # Bollinger Band - Normal Mean
+# def BB(data, n = 14):
+#     # df = data.copy()
+#     data['MB'] = data['Close'].rolling(n).mean()
+#     data['STD'] = data['Close'].rolling(n).std(ddof = 0)
+#     data['UB'] = data['MB'] + 2* data['STD']
+#     data['LB'] = data['MB'] - 2* data['STD']
+#     data['WIDTH'] = data['UB'] - data['LB']
+#     return data[['MB','UB','LB','STD','WIDTH']]
 
 # Linear Regression Band
 def LR(data, ax= None):
