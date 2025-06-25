@@ -35,17 +35,17 @@ def label_sd_categories(df, column='Distance_From_Mean'):
 
     def categorize(x):
         if x >= mean + 3 * std:
-            return 'BELOW 3 SD', 3
+            return 'ABOVE 3 SD', 3
         elif x >= mean + 2 * std:
-            return 'BELOW 2 SD', 2
+            return 'ABOVE 2 SD', 2
         elif x >= mean + 1 * std:
-            return 'BELOW 1 SD', 1
+            return 'ABOVE 1 SD', 1
         elif x <= mean - 3 * std:
-            return 'ABOVE 3 SD', -3
+            return 'BELOW 3 SD', -3
         elif x <= mean - 2 * std:
-            return 'ABOVE 2 SD', -2
+            return 'BELOW 2 SD', -2
         elif x <= mean - 1 * std:
-            return 'ABOVE 1 SD', -1
+            return 'BELOW 1 SD', -1
         else:
             return 'AT MEAN', 0
 
