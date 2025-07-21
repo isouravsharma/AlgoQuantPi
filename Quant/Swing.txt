@@ -16,3 +16,11 @@ score += int((row['High'] - row['Low']) < 1.2 * row['ATR'])
 score += int(row['Close'] > row['Low'] + 0.4 * (row['High'] - row['Low']))
 
 entry_long = score >= 5  # Tunable threshold
+
+
+----------
+Distance from Mean 
+
+- 1SD Exit 
+- 2SD 
+- 3SD
